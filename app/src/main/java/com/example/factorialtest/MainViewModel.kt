@@ -4,8 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.math.BigInteger
+import kotlin.concurrent.thread
+import kotlin.coroutines.suspendCoroutine
 
 class MainViewModel: ViewModel() {
 
@@ -21,13 +26,31 @@ class MainViewModel: ViewModel() {
         _state.value = Progress
         viewModelScope.launch {
             val number = value.toLong()
-            // calculate
+            val result = factorial(number)
             delay(1000)
-            _state.value = Result(number.toString())
+            _state.value = Factorial(result)
         }
     }
-//
-//    fun resetError() {
-//        _state.value = State()
+
+    private suspend fun factorial(number: Long): String {
+        return withContext(Dispatchers.Default) {
+            var result = BigInteger.ONE
+            for (i in 1..number) {
+                result = result.multiply(BigInteger.valueOf(i))
+            }
+            result.toString()
+        }
+    }
+
+//    private suspend fun factorial(number: Long): String {
+//        return suspendCoroutine {
+//            thread {
+//                var result = BigInteger.ONE
+//                for (i in 1..number) {
+//                    result = result.multiply(BigInteger.valueOf(i))
+//                }
+//                it.resumeWith(Result.success(result.toString()))
+//            }
+//        }
 //    }
 }
