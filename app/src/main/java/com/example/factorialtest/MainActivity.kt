@@ -33,22 +33,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.state.observe(this) {
-            if (it.isError) {
-                Toast.makeText(this,
-                    "Error: you did not entered value",
-                    Toast.LENGTH_SHORT
-                ).show()
-                viewModel.resetError()
-            }
-            if (it.isInProgress) {
-                binding.progressBarLoading.visibility = View.VISIBLE
-                binding.buttonCalculate.isEnabled = false
-            } else {
-                binding.progressBarLoading.visibility = View.GONE
-                binding.buttonCalculate.isEnabled = true
-            }
-            if (it.factorial.isNotBlank()) {
-                binding.textViewFactorial.text = it.factorial
+            binding.progressBarLoading.visibility = View.GONE
+            binding.buttonCalculate.isEnabled = true
+
+            when (it) {
+                is Error -> {
+                    Toast.makeText(this,
+                        "Error: you did not entered value",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is Progress -> {
+                    binding.progressBarLoading.visibility = View.VISIBLE
+                    binding.buttonCalculate.isEnabled = false
+                }
+
+                is Result -> {
+                    binding.textViewFactorial.text = it.factorial
+                }
             }
         }
     }

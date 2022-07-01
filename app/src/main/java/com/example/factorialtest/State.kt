@@ -1,12 +1,10 @@
 package com.example.factorialtest
 
-class State(
-    val isError: Boolean = false,
-    val isInProgress: Boolean = false,
-    val factorial: String = EMPTY_STRING
-) {
-    companion object {
+sealed class State()
 
-        private const val EMPTY_STRING = ""
-    }
-}
+object Error: State()
+
+object Progress: State()
+
+class Result(val factorial: String): State()
+
